@@ -68,6 +68,7 @@ ale jitter jest większy. Szczegóły w [docs/gcs.md](docs/gcs.md).
 
 ## Dokumentacja
 
+- [docs/shopping-list.md](docs/shopping-list.md): lista zakupów z cenami i kolejnością
 - [docs/hardware.md](docs/hardware.md): lista części, okablowanie skrętki, podłączenie ESP32 ↔ ELRS, zasilanie
 - [docs/gcs.md](docs/gcs.md): budowanie i konfiguracja aplikacji (Windows / Ubuntu), EdgeTX, strojenie opóźnień
 - [docs/protocol.md](docs/protocol.md): protokół UDP laptop↔maszt i użyte ramki CRSF

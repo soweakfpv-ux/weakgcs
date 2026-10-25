@@ -1,15 +1,17 @@
 # Sprzęt
 
+Pełna lista zakupów z cenami: [shopping-list.md](shopping-list.md).
+
 ## Lista części
 
 | Element | Propozycja | Uwagi |
 |---|---|---|
-| Kontroler masztu | **Olimex ESP32-POE** (lub -POE-ISO) | Ethernet + zasilanie PoE (802.3af) na jednej płytce. Alternatywa: WT32-ETH01 + osobny splitter PoE. |
+| Kontroler masztu | **Olimex ESP32-POE** | Ethernet + USB do programowania, zasilany 5 V z przetwornicy. Alternatywa: WT32-ETH01. |
 | Moduł ELRS TX | Dowolny zewnętrzny moduł ELRS (np. Radiomaster Ranger / Ranger Micro, BetaFPV) | Zasilanie 5–8 V zależnie od modułu, przy 1 W pobiera nawet 1–2 A. |
 | VRX | Analogowy odbiornik 5.8 GHz z wyjściem AV (np. RX5808 z diversity, albo VRX z wyjściem AV) | Na maszcie najlepiej z anteną kierunkową (patch/helical) i dookólną w diversity. |
 | Baluny wideo | Para pasywnych balunów CCTV (BNC ↔ skrętka) | Wideo analogowe na jednej parze skrętki, zero opóźnienia, do kilkuset metrów. |
 | Grabber USB | Grabber AV → USB (UVC) | **Przetestuj kilka modeli**, różnią się opóźnieniem o dziesiątki ms. Szukaj takich, które podają YUYV (nieskompresowane). |
-| Zasilacz PoE | Injector PoE 802.3af/at przy laptopie albo pasywne 24 V | Patrz „Zasilanie” niżej. |
+| Zasilanie | 24 V (zasilacz, LiPo 6S lub powerbank PD 20 V) na brązowej parze | Patrz „Okablowanie skrętki” niżej. |
 | Przetwornice | Step-down 5 V (≥3 A) i ewentualnie 12 V dla VRX | Zależnie od tego, czym zasilane są moduł i VRX. |
 | Kabel | Skrętka kat. 5e/6, zewnętrzna (żelowana/UV), do 100 m | |
 | Maszt | Teleskopowy maszt wędkarski/antenowy 4–8 m | Elektronika w szczelnej puszce, anteny na górze. |
@@ -25,13 +27,13 @@ Ethernet 100 Mbit/s używa tylko dwóch par (pomarańczowej i zielonej). Zostaj�
 | niebieska (4-5) | **wideo analogowe przez balun** |
 | brązowa (7-8) | zasilanie (pasywne PoE: + i −) albo nieużywana |
 
-Uwaga: przy standardowym PoE 802.3af „mode B” zasilanie idzie właśnie parami 4-5 i 7-8, co koliduje
-z wideo na niebieskiej parze. Wybierz jedno z dwóch:
+**Zalecany wariant:** pary rozdzielone ręcznie przejściówkami RJ45 ↔ zaciski śrubowe na obu końcach
+kabla. Do ESP32 i laptopa idą krótkimi patchcordami tylko pary danych, niebieska trafia do balunów,
+a brązowa niesie 24 V do przetwornic na maszcie.
 
-1. **Zasilanie mode A (po parach danych).** Część injectorów i Olimex ESP32-POE to obsługuje, wtedy
-   niebieska para jest wolna na wideo. Sprawdź w dokumentacji injectora.
-2. **Pasywne zasilanie 24 V na brązowej parze**, wideo na niebieskiej, a ESP32 zasilany z przetwornicy
-   (wariant z WT32-ETH01 albo ESP32-POE zasilany przez 5 V).
+Nie używaj gotowych injectorów PoE (ani pasywnych, ani 802.3af mode B): kładą zasilanie na obu wolnych
+parach, czyli także na niebieskiej, którą idzie wideo. Z tego samego powodu **nie podawaj 24 V do gniazda
+RJ45 płytki ESP32**. Płytkę zasilasz 5 V z przetwornicy.
 
 **Spadek napięcia.** Żyła skrętki 24 AWG ma ok. 0,084 Ω/m. Jedna para (+ na jednej żyle, − na drugiej)
 na 100 m daje pętlę 2 × 100 m × 0,084 Ω/m ≈ 17 Ω, czyli przy 0,6 A spadek ≈ 10 V. Z 24 V zostaje ok. 14 V,
