@@ -9,7 +9,7 @@ a pilot siedzi przy laptopie połączonym z masztem jednym kablem (skrętką do 
         ▼
  ┌──────────────┐   skrętka (Ethernet + wideo analogowe + zasilanie)   ┌──────────────────────────┐
  │   LAPTOP     │══════════════════════════════════════════════════════│  MASZT                   │
- │  weakgcs     │   UDP: RC 500 Hz  ──►                                │  ESP32 + Ethernet (PoE)  │
+ │  weakgcs     │   UDP: RC 500 Hz  ──►                                │  ESP32 + Ethernet        │
  │  - RC        │   ◄── status 10 Hz + telemetria ELRS                 │   └─ CRSF ─► moduł ELRS  │
  │  - wideo+OSD │   ◄── wideo analogowe (balun) ─► grabber USB         │  VRX 5.8 GHz ─► balun    │
  └──────────────┘                                                      └──────────────────────────┘

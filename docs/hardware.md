@@ -25,7 +25,7 @@ Ethernet 100 Mbit/s używa tylko dwóch par (pomarańczowej i zielonej). Zostaj�
 | pomarańczowa (1-2) | Ethernet TX |
 | zielona (3-6) | Ethernet RX |
 | niebieska (4-5) | **wideo analogowe przez balun** |
-| brązowa (7-8) | zasilanie (pasywne PoE: + i −) albo nieużywana |
+| brązowa (7-8) | zasilanie 24 V (+ i −) |
 
 **Zalecany wariant:** pary rozdzielone ręcznie przejściówkami RJ45 ↔ zaciski śrubowe na obu końcach
 kabla. Do ESP32 i laptopa idą krótkimi patchcordami tylko pary danych, niebieska trafia do balunów,
