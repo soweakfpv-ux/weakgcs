@@ -123,4 +123,4 @@ SteadyView ── jack 3,5 mm ──► RCA (żółty) ── RCA↔BNC ── b
 - **Kable jack 3,5 mm → RCA nie mają jednego standardu**: to, który pin niesie wideo, zależy od
   producenta. Użyj kabla od Skyzone albo sprawdź multimetrem (ciągłość), który pin jacka to wideo,
   a który to masa.
-- Moduł i odbiornik ELRS są na maszcie blisko siebie. Trzymaj anteny 2,4 GHz i 5,8 GHz z dala od siebie.
+- Moduł ELRS TX i SteadyView stoją na maszcie obok siebie: rozsuń anteny 2,4 GHz i 5,8 GHz jak najdalej.
