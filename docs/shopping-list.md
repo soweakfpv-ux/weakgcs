@@ -43,8 +43,8 @@ pary danych.
 | # | Co | Ile | ~Cena | Uwagi |
 |---|---|---|---|---|
 | 14 | **Para pasywnych balunów wideo CCTV** (BNC ↔ skrętka, zaciski) | 1 para | 20–50 zł | Wersje z zaciskami śrubowymi są najwygodniejsze. |
-| 15 | Przejściówki BNC ↔ cinch (RCA) | 2 | 10 zł | VRX i grabber zwykle mają RCA. |
-| 16 | **Grabber AV → USB** (UVC, „AV to USB video capture”) | **1** (+1 opcjonalnie) | 30–100 zł/szt. | Do działania wystarczy jeden. Drugi, inny model, kup tylko jeśli zmierzone opóźnienie pierwszego będzie za duże. Szukaj takich, które podają **YUYV** (nieskompresowane). Na Linuksie sprawdzisz to `v4l2-ctl --list-formats-ext`. |
+| 15 | Przejściówka BNC (gniazdo) ↔ RCA (wtyk) | 1 | 5–10 zł | Przy laptopie: balun (BNC) → wejście RCA grabbera. Na maszcie niepotrzebna, bo wyjście SteadyView lutujesz do gniazda BNC. |
+| 16 | **RdestGrabber** (rdest.io): grabber USB CVBS „no blue screen” | 1 | 159 zł | Wejście RCA, USB 2.0 UVC bez sterowników, zasilanie z USB. Przy słabym sygnale pokazuje zakłócony obraz zamiast niebieskiego ekranu. Bez sygnału po 2 s wyświetla logo, przy starcie przez 3 s ekran startowy. Formatu pikseli (YUYV/MJPEG) opis nie podaje; sprawdź `v4l2-ctl --list-formats-ext`. |
 
 ## 3. Kabel i sieć
 
