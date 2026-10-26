@@ -37,6 +37,9 @@ constexpr int ETH_MDIO_PIN = 18;
 constexpr eth_clock_mode_t ETH_CLK = ETH_CLOCK_GPIO17_OUT;
 constexpr int CRSF_TX_PIN = 4;   // -> 1 kOhm -> module CRSF/S.Port pin
 constexpr int CRSF_RX_PIN = 36;  // direct to module CRSF/S.Port pin (input-only GPIO)
+constexpr int VRX_CLK_PIN = 32;  // SteadyView SPI (see docs/hardware.md)
+constexpr int VRX_DATA_PIN = 33;
+constexpr int VRX_CS_PIN = 13;
 #elif defined(WGCS_BOARD_WT32_ETH01)
 constexpr uint8_t ETH_ADDR = 1;
 constexpr int ETH_POWER_PIN = 16;
@@ -45,6 +48,9 @@ constexpr int ETH_MDIO_PIN = 18;
 constexpr eth_clock_mode_t ETH_CLK = ETH_CLOCK_GPIO0_IN;
 constexpr int CRSF_TX_PIN = 17;
 constexpr int CRSF_RX_PIN = 5;
+constexpr int VRX_CLK_PIN = 14;  // avoid strapping pins (0, 2, 12, 15) for these
+constexpr int VRX_DATA_PIN = 4;
+constexpr int VRX_CS_PIN = 33;
 #else
 #error "Select a board: -DWGCS_BOARD_OLIMEX_POE or -DWGCS_BOARD_WT32_ETH01"
 #endif

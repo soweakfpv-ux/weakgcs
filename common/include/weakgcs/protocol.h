@@ -4,6 +4,7 @@
 // - The mast replies to the sender address/port of the latest RcPacket with:
 //     * MastStatusPacket at 10 Hz,
 //     * TelemetryPacket for every CRSF telemetry frame received from the ELRS module.
+// - GCS sends VrxPacket at 4 Hz when it controls the video receiver channel (SteadyView over SPI).
 //
 // All fields are little-endian (both x86 and ESP32 are little-endian, so structs are sent as-is).
 // See docs/protocol.md for details.
@@ -22,6 +23,7 @@ enum MsgType : uint8_t {
     MSG_RC = 1,
     MSG_TELEMETRY = 2,
     MSG_MAST_STATUS = 3,
+    MSG_VRX = 4,
 };
 
 enum MastState : uint8_t {
@@ -62,7 +64,7 @@ struct MastStatusPacket {
     Header hdr;
     uint32_t uptimeMs;
     uint8_t state;            // MastState
-    uint8_t reserved;
+    uint8_t vrxChannel;       // channel index (weakgcs/vrx.h) last sent to the VRX, 0xFF = not set
     uint16_t lastRcSeq;
     uint32_t echoGcsTimeUs;   // gcsTimeUs of the latest RcPacket
     uint32_t echoAgeUs;       // how long ago (mast clock) that packet arrived
@@ -77,12 +79,21 @@ struct MastStatusPacket {
     uint16_t crc;
 };
 
+// Desired video receiver channel. Sent repeatedly; the mast only re-tunes when it changes.
+struct VrxPacket {
+    Header hdr;
+    uint8_t channel;  // index into vrx::FREQUENCIES
+    uint8_t reserved;
+    uint16_t crc;
+};
+
 #pragma pack(pop)
 
 static_assert(sizeof(Header) == 8, "protocol layout");
 static_assert(sizeof(RcPacket) == 48, "protocol layout");
 static_assert(sizeof(TelemetryPacket) == 75, "protocol layout");
 static_assert(sizeof(MastStatusPacket) == 58, "protocol layout");
+static_assert(sizeof(VrxPacket) == 12, "protocol layout");
 
 // CRC-16/CCITT-FALSE
 inline uint16_t crc16(const uint8_t* data, size_t len) {

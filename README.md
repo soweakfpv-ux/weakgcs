@@ -42,7 +42,8 @@ python3 tools/fake_mast.py
 cd firmware/mast && pio run -e esp32-poe -t upload
 ```
 
-Klawisze w aplikacji: **F11** pełny ekran, **F1** OSD wł./wył., **F2** monitor kanałów, **Esc** wyjście.
+Klawisze w aplikacji: **F11** pełny ekran, **F1** OSD wł./wył., **F2** monitor kanałów, **Esc** wyjście,
+**Ctrl+←/→** kanał wideo, **Ctrl+↑/↓** pasmo wideo (gdy `vrx_channel` jest ustawione).
 
 ## Najważniejsze założenia
 

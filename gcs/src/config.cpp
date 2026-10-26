@@ -60,6 +60,11 @@ bool setValue(Config& cfg, const std::string& section, const std::string& key, c
     if (k == "video.width") return intIn(cfg.videoWidth, 0, 8192);
     if (k == "video.height") return intIn(cfg.videoHeight, 0, 8192);
     if (k == "video.fps") return intIn(cfg.videoFps, 0, 1000);
+    if (k == "video.vrx_channel") {
+        if (value.empty() || value == "none") return cfg.vrxChannel = vrx::CHANNEL_NONE, true;
+        cfg.vrxChannel = vrx::parseChannel(value.c_str());
+        return cfg.vrxChannel != vrx::CHANNEL_NONE || (error = "expected band+channel like R1, or none", false);
+    }
     if (k == "video.vsync") return toBool(value, cfg.vsync) || (error = "expected 0/1", false);
     if (k == "video.fullscreen") return toBool(value, cfg.fullscreen) || (error = "expected 0/1", false);
     if (k == "osd.battery_cells") return intIn(cfg.batteryCells, 0, 14);

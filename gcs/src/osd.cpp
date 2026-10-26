@@ -156,12 +156,19 @@ void drawOsd(SDL_Renderer* renderer, const Config& cfg, const OsdOptions& opt, c
         std::snprintf(buf, sizeof(buf), "%u SAT %dm %.0fkm/h", t.gps.satellites, t.gps.altitudeM, t.gps.groundSpeedKmh);
         p.textRight(bottom - 1, WHITE, buf);
     }
+    char vrxText[40] = "";
+    if (link.vrxRequested != vrx::CHANNEL_NONE) {
+        char name[3];
+        vrx::channelName(link.vrxRequested, name);
+        bool applied = link.mastAlive && link.mast.vrxChannel == link.vrxRequested;
+        std::snprintf(vrxText, sizeof(vrxText), "%s%s %u ", applied ? "" : ">", name, vrx::FREQUENCIES[link.vrxRequested]);
+    }
     if (video.open) {
-        char buf[64];
-        std::snprintf(buf, sizeof(buf), "VID %dx%d %.0ffps", video.width, video.height, video.fps);
+        char buf[96];
+        std::snprintf(buf, sizeof(buf), "%sVID %dx%d %.0ffps", vrxText, video.width, video.height, video.fps);
         p.textRight(bottom, WHITE, buf);
     } else {
-        p.textRight(bottom, RED, "NO VIDEO");
+        p.textRight(bottom, RED, std::string(vrxText) + "NO VIDEO");
     }
 
     // ---- channel monitor ----

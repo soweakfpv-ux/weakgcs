@@ -67,6 +67,45 @@ half-duplex, nieodwróconą. ESP32 ma osobne TX i RX, więc łączymy je tak:
 
 Piny ustawiasz w `firmware/mast/src/config.h`.
 
+## SteadyView (starszy moduł goglowy) na maszcie
+
+Dotyczy wersji **Skyzone SteadyView V3.3** (płytka SteadyView na płytce bazowej RX5G, dwa złącza
+SMA, listwa pinów do zatoki gogli wzdłuż dłuższej krawędzi, USB-C do aktualizacji firmware).
+Moduł jest zrobiony do zatoki gogli Skyzone, więc nie ma własnego gniazda AV ani wyboru kanału.
+W goglach kanał ustawia się przez 3 linie SPI. Na maszcie tę rolę przejmuje ESP32, więc
+**kanał wideo zmieniasz z laptopa** (`vrx_channel` w `gcs.ini`, Ctrl+strzałki w aplikacji).
+
+Do modułu podłączasz 6 przewodów, lutując je do jego złącza (albo wkładając w gniazdo goldpin
+żeńskie, jeśli raster pasuje):
+
+| Sygnał modułu | Dokąd | Uwagi |
+|---|---|---|
+| **5 V** | przetwornica 5 V | ok. 380 mA, dobrze dać osobną przetwornicę albo filtr LC (szumy z przetwornicy widać na obrazie) |
+| **GND** | masa | wspólna z ESP32 |
+| **Video** | balun (przez wtyk RCA/BNC) | sygnał kompozytowy ok. 1 Vpp, przewód ekranowany lub możliwie krótki |
+| **CLK** (pin 1 SPI) | ESP32 `VRX_CLK_PIN` | 3,3 V |
+| **DATA** (pin 2 SPI) | ESP32 `VRX_DATA_PIN` | 3,3 V |
+| **CS** (pin 3 SPI) | ESP32 `VRX_CS_PIN` | 3,3 V |
+
+| Płytka | CLK | DATA | CS |
+|---|---|---|---|
+| Olimex ESP32-POE | GPIO32 | GPIO33 | GPIO13 |
+| WT32-ETH01 | GPIO14 | GPIO4 | GPIO33 |
+
+**Zanim cokolwiek podłączysz:** dokładny układ pinów złącza modułu nie jest tu potwierdzony.
+Oznaczenie CLK/DATA/CS jako pinów 1/2/3 pochodzi z dokumentacji ExpressLRS VRX Backpack. Pozostałe
+piny (5 V, GND, wideo) ustal tak:
+
+1. Obejrzyj opisy na płytce modułu (często są nadrukowane przy pinach).
+2. GND: ciągłość z metalowym ekranem/obudową modułu.
+3. 5 V: w goglach, na włączonych goglach, zmierz napięcie na pinach zatoki względem GND.
+4. Wideo: pin, który w goglach idzie do wejścia wideo. W razie wątpliwości oscyloskop
+   (sygnał ok. 1 Vpp z impulsami synchronizacji co 64 µs).
+
+Sterowanie SPI: przy pierwszym ustawieniu kanału firmware przełącza moduł w tryb **Mix**
+(długi impuls na CLK, tak jak robi to ELRS Backpack), potem wpisuje częstotliwość do rejestrów
+RTC6705. Aplikacja ponawia żądanie co 250 ms, więc po restarcie masztu kanał ustawi się sam.
+
 ## Wideo
 
 ```

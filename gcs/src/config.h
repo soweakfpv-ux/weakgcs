@@ -4,6 +4,7 @@
 #include <string>
 
 #include <weakgcs/protocol.h>
+#include <weakgcs/vrx.h>
 
 #include "channel_map.h"
 
@@ -23,6 +24,7 @@ struct Config {
     int videoWidth = 0;       // 0 = pick automatically
     int videoHeight = 0;
     int videoFps = 0;
+    uint8_t vrxChannel = vrx::CHANNEL_NONE;  // SteadyView channel set by the mast; NONE = don't control
     bool vsync = false;
     bool fullscreen = false;
 

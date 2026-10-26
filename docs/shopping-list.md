@@ -112,15 +112,16 @@ Skyzone sprzedaje dwa różne produkty pod nazwą SteadyView:
 | Wersja | Jak poznać | Co dokupić, żeby mieć wyjście AV |
 |---|---|---|
 | **SteadyView X** (z ekranikiem i przyciskami) | Ma własny wyświetlacz do wyboru kanału | **Płytka ground station** od Skyzone (bywa w zestawie „Ground Station Kit”): zasilanie 2–6S, wyjście AV na jack 3,5 mm, kabel AV w zestawie. Kanał ustawiasz na ekraniku, raz, na ziemi. |
-| **SteadyView / RapidMix**, starszy moduł goglowy | Bez ekranu, wkładany do zatoki gogli (5 V, ok. 380 mA) | Adapter/płytka do zatoki modułów (breakout): 5 V, masa i wyprowadzenie pinu wideo. Wybór kanału zwykle robią gogle, więc **sprawdź, jak moduł zmienia kanał bez gogli**. |
+| **SteadyView / RapidMix**, starszy moduł goglowy (**ten masz**) | Bez ekranu, wkładany do zatoki gogli (5 V, ok. 380 mA) | Nic gotowego: lutujesz 6 przewodów (5 V, GND, wideo, CLK, DATA, CS). Kanał ustawia ESP32 przez SPI, sterowany z laptopa. Szczegóły w [hardware.md](hardware.md#steadyview-starszy-moduł-goglowy-na-maszcie). Dokup: gniazdo/wtyk RCA lub BNC do lutowania, kawałek przewodu ekranowanego, ewentualnie osobną przetwornicę 5 V lub filtr LC (dławik + kondensator) dla czystszego obrazu. |
 
-Tor wideo w obu przypadkach:
+Tor wideo:
 
 ```
-SteadyView ── jack 3,5 mm ──► RCA (żółty) ── RCA↔BNC ── balun ══ niebieska para ══ balun ── BNC↔RCA ── grabber USB
+SteadyView X:          jack 3,5 mm ──► RCA (żółty) ── RCA↔BNC ── balun ══ … ── grabber USB
+SteadyView (starszy):  pin wideo ── przewód ekranowany ── BNC ── balun ══ niebieska para ══ balun ── BNC↔RCA ── grabber USB
 ```
 
-- **Kable jack 3,5 mm → RCA nie mają jednego standardu**: to, który pin niesie wideo, zależy od
+- (SteadyView X) **Kable jack 3,5 mm → RCA nie mają jednego standardu**: to, który pin niesie wideo, zależy od
   producenta. Użyj kabla od Skyzone albo sprawdź multimetrem (ciągłość), który pin jacka to wideo,
   a który to masa.
 - Moduł ELRS TX i SteadyView stoją na maszcie obok siebie: rozsuń anteny 2,4 GHz i 5,8 GHz jak najdalej.

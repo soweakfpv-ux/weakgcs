@@ -35,11 +35,18 @@ void handleRc(const uint8_t* buf, int len, int64_t now) {
     g_stats.rcReceived++;
 }
 
+void handleVrx(const uint8_t* buf, int len) {
+    if (!wgcs::verify<wgcs::VrxPacket>(buf, len, wgcs::MSG_VRX)) return;
+    uint8_t channel = buf[offsetof(wgcs::VrxPacket, channel)];
+    if (channel != g_stats.vrxChannel) xQueueOverwrite(g_vrxQueue, &channel);
+}
+
 void sendStatus(int sock, const sockaddr_in& to, uint16_t seq, int64_t now) {
     RcSnapshot rc = rcLoad();
     wgcs::MastStatusPacket pkt = {};
     pkt.uptimeMs = (uint32_t)(now / 1000);
     pkt.state = g_stats.state;
+    pkt.vrxChannel = g_stats.vrxChannel;
     pkt.lastRcSeq = rc.seq;
     pkt.echoGcsTimeUs = rc.gcsTimeUs;
     pkt.echoAgeUs = (uint32_t)(now - rc.rxTimeUs);
@@ -97,6 +104,8 @@ void netTask(void*) {
             handleRc(buf, n, now);
             gcs = from;  // reply wherever the GCS is sending from
             haveGcs = true;
+        } else if (n > 0 && wgcs::peekType(buf, n) == wgcs::MSG_VRX) {
+            handleVrx(buf, n);
         } else if (n > 0) {
             g_stats.rcDropped++;
         }

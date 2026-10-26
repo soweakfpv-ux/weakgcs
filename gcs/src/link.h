@@ -25,6 +25,7 @@ struct LinkSnapshot {
     bool realtimePriority = false;
     uint16_t channels[crsf::NUM_CHANNELS] = {};
     double rcRateHz = 0;
+    uint8_t vrxRequested = vrx::CHANNEL_NONE;  // what we ask the mast for; mast.vrxChannel = what it set
 
     // Mast
     bool mastAlive = false;
@@ -44,10 +45,14 @@ public:
     void stop();
     LinkSnapshot snapshot();
 
+    // Changes the video receiver channel (vrx::CHANNEL_NONE = stop controlling it).
+    void setVrxChannel(uint8_t channel);
+
 private:
     void rcThread();
     void rxThread();
     void updateJoystick(Clock::time_point now);
+    void sendVrx(Clock::time_point now);
     uint32_t nowUs() const;
 
     const Config& cfg_;
@@ -59,8 +64,10 @@ private:
     // rcThread only
     SDL_Joystick* joystick_ = nullptr;
     Clock::time_point lastJoystickScan_{};
+    uint16_t vrxSeq_ = 0;
 
     std::mutex mutex_;  // guards everything below
     LinkSnapshot state_;
     Clock::time_point lastStatusTime_{};
+    Clock::time_point lastVrxSend_{};
 };

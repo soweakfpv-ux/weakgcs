@@ -28,6 +28,7 @@ struct Stats {
     std::atomic<uint32_t> crsfCrcErrors{0};
     std::atomic<uint32_t> timingRate{0};
     std::atomic<int32_t> timingOffset{0};
+    std::atomic<uint8_t> vrxChannel{0xFF};  // last channel sent to the VRX module
 };
 extern Stats g_stats;
 
@@ -38,5 +39,9 @@ struct TelemetryItem {
 };
 extern QueueHandle_t g_telemetryQueue;
 
+// Channel requests from the GCS (length-1 queue, latest value wins).
+extern QueueHandle_t g_vrxQueue;
+
 void crsfTask(void*);
 void netTask(void*);
+void vrxTask(void*);

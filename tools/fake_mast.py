@@ -17,12 +17,14 @@ import time
 
 MAGIC = 0x53434757
 VERSION = 1
-MSG_RC, MSG_TELEMETRY, MSG_MAST_STATUS = 1, 2, 3
+MSG_RC, MSG_TELEMETRY, MSG_MAST_STATUS, MSG_VRX = 1, 2, 3, 4
 WAITING, ACTIVE, FAILSAFE = 0, 1, 2
 FAILSAFE_TIMEOUT = 0.2
 
 HEADER = struct.Struct("<IBBH")
 RC = struct.Struct("<IBBHIBB16HH")  # header, gcsTimeUs, flags, reserved, channels, crc
+VRX = struct.Struct("<IBBHBBH")  # header, channel, reserved, crc
+BANDS = "ABEFRL"
 STATUS_BODY = struct.Struct("<IBBHII6IIi")
 
 
@@ -81,6 +83,7 @@ def main() -> None:
     tx_seq = 0
     next_status = next_telem = next_print = 0.0
     channels = [992] * 16
+    vrx_channel = 0xFF
 
     while True:
         try:
@@ -98,6 +101,11 @@ def main() -> None:
                     rc_ok += 1
                 else:
                     rc_bad += 1
+            elif len(data) == VRX.size and crc16(data[:-2]) == struct.unpack_from("<H", data, VRX.size - 2)[0]:
+                f = VRX.unpack(data)
+                if f[0] == MAGIC and f[2] == MSG_VRX and f[4] < 48 and f[4] != vrx_channel:
+                    vrx_channel = f[4]
+                    print(f"VRX tuned to {BANDS[vrx_channel // 8]}{vrx_channel % 8 + 1}")
             else:
                 rc_bad += 1
 
@@ -116,7 +124,7 @@ def main() -> None:
         if now >= next_status:
             next_status = now + 0.1
             body = STATUS_BODY.pack(
-                int((now - start) * 1000) & 0xFFFFFFFF, state, 0, last_seq, last_gcs_time,
+                int((now - start) * 1000) & 0xFFFFFFFF, state, vrx_channel, last_seq, last_gcs_time,
                 int((now - last_rc) * 1e6) & 0xFFFFFFFF, rc_ok, rc_bad, failsafes, rc_ok, 0, 0,
                 20000, 0)  # pretend ELRS runs at 500 Hz
             sock.sendto(seal(MSG_MAST_STATUS, tx_seq, body), gcs)

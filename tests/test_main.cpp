@@ -6,6 +6,7 @@
 
 #include <weakgcs/crsf.h>
 #include <weakgcs/protocol.h>
+#include <weakgcs/vrx.h>
 
 #include "channel_map.h"
 #include "config.h"
@@ -128,8 +129,34 @@ static void testProtocol() {
     CHECK(wgcs::verify<wgcs::RcPacket>(&pkt, sizeof(pkt), wgcs::MSG_RC));
     CHECK(!wgcs::verify<wgcs::RcPacket>(&pkt, sizeof(pkt) - 1, wgcs::MSG_RC));
     CHECK(!wgcs::verify<wgcs::MastStatusPacket>(&pkt, sizeof(pkt), wgcs::MSG_MAST_STATUS));
+
+    wgcs::VrxPacket v{};
+    v.channel = 32;
+    wgcs::seal(v, wgcs::MSG_VRX, 1);
+    CHECK(wgcs::verify<wgcs::VrxPacket>(&v, sizeof(v), wgcs::MSG_VRX));
+    CHECK(reinterpret_cast<const uint8_t*>(&v)[offsetof(wgcs::VrxPacket, channel)] == 32);
     reinterpret_cast<uint8_t*>(&pkt)[20] ^= 0x40;
     CHECK(!wgcs::verify<wgcs::RcPacket>(&pkt, sizeof(pkt), wgcs::MSG_RC));
+}
+
+static void testVrx() {
+    CHECK(vrx::parseChannel("R1") == 32);
+    CHECK(vrx::parseChannel("a8") == 7);
+    CHECK(vrx::parseChannel("L8") == 47);
+    CHECK(vrx::parseChannel("G1") == vrx::CHANNEL_NONE);
+    CHECK(vrx::parseChannel("R9") == vrx::CHANNEL_NONE);
+    CHECK(vrx::parseChannel("R10") == vrx::CHANNEL_NONE);
+    CHECK(vrx::FREQUENCIES[vrx::parseChannel("R1")] == 5658);
+    CHECK(vrx::FREQUENCIES[vrx::parseChannel("F4")] == 5800);
+    char name[3];
+    vrx::channelName(32, name);
+    CHECK(std::string(name) == "R1");
+
+    // RTC6705: 5658 MHz -> (5658 - 479) / 2 = 2589 = 32 * 80 + 29 -> N = 80, A = 29
+    CHECK(vrx::synthBData(5658) == ((80u << 7) | 29u));
+    // write word: address in bits 0-3, write flag in bit 4, data from bit 5
+    CHECK(vrx::writeWord(vrx::REG_SYNTH_B, 1) == 0x31);
+    CHECK(vrx::writeWord(vrx::REG_SYNTH_A, vrx::SYNTH_A_DATA) == 0x110);
 }
 
 static void testChannelMap() {
@@ -172,6 +199,10 @@ static void testConfig() {
     CHECK(cfg.rcRateHz == 250);
     CHECK(cfg.vsync);
     CHECK(cfg.channelMap[2].kind == ChannelSource::Constant);
+    CHECK(cfg.vrxChannel == vrx::CHANNEL_NONE);
+    CHECK(parseConfig("[video]\nvrx_channel = f4\n", cfg, err));
+    CHECK(cfg.vrxChannel == vrx::parseChannel("F4"));
+    CHECK(!parseConfig("[video]\nvrx_channel = X9\n", cfg, err));
 
     Config bad;
     CHECK(!parseConfig("[rc]\nrate_hz = 5000\n", bad, err));
@@ -186,6 +217,7 @@ int main() {
     testTelemetry();
     testTiming();
     testProtocol();
+    testVrx();
     testChannelMap();
     testConfig();
     if (failures == 0) std::printf("all tests passed\n");

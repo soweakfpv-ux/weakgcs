@@ -15,6 +15,7 @@ namespace {
 
 constexpr auto JOYSTICK_SCAN_INTERVAL = milliseconds(500);
 constexpr auto MAST_TIMEOUT = milliseconds(500);
+constexpr auto VRX_SEND_INTERVAL = milliseconds(250);
 // Arm switch counts as "off" below this (ELRS/Betaflight arm on AUX1 high).
 constexpr uint16_t ARM_OFF_BELOW = (uint16_t)crsf::usToTicks(1300);
 
@@ -26,7 +27,10 @@ bool containsIgnoreCase(const std::string& haystack, const std::string& needle) 
 
 }  // namespace
 
-Link::Link(const Config& cfg, UdpSocket& sock) : cfg_(cfg), sock_(sock) { state_.armGuard = cfg.armChannel > 0; }
+Link::Link(const Config& cfg, UdpSocket& sock) : cfg_(cfg), sock_(sock) {
+    state_.armGuard = cfg.armChannel > 0;
+    state_.vrxRequested = cfg.vrxChannel;
+}
 
 Link::~Link() { stop(); }
 
@@ -48,6 +52,27 @@ LinkSnapshot Link::snapshot() {
     std::lock_guard lock(mutex_);
     state_.mastAlive = lastStatusTime_ != Clock::time_point{} && Clock::now() - lastStatusTime_ < MAST_TIMEOUT;
     return state_;
+}
+
+void Link::setVrxChannel(uint8_t channel) {
+    std::lock_guard lock(mutex_);
+    state_.vrxRequested = channel;
+    lastVrxSend_ = {};  // send right away
+}
+
+void Link::sendVrx(Clock::time_point now) {
+    uint8_t channel;
+    {
+        std::lock_guard lock(mutex_);
+        if (state_.vrxRequested == vrx::CHANNEL_NONE || now - lastVrxSend_ < VRX_SEND_INTERVAL) return;
+        lastVrxSend_ = now;
+        channel = state_.vrxRequested;
+    }
+    // Sent repeatedly so a rebooted mast re-tunes on its own; the mast ignores repeats.
+    wgcs::VrxPacket pkt{};
+    pkt.channel = channel;
+    wgcs::seal(pkt, wgcs::MSG_VRX, vrxSeq_++);
+    sock_.send(&pkt, sizeof(pkt));
 }
 
 uint32_t Link::nowUs() const { return (uint32_t)duration_cast<microseconds>(Clock::now() - epoch_).count(); }
@@ -107,6 +132,7 @@ void Link::rcThread() {
         next += period;
         if (now - next > period * 10) next = now + period;  // we were suspended; don't burst
 
+        sendVrx(now);  // video works even without the radio connected
         updateJoystick(now);
         if (!joystick_) continue;  // no radio -> no packets -> mast failsafes the drone
 

@@ -14,7 +14,8 @@ kompiluje się w aplikacji i w firmware, więc obie strony zawsze mają ten sam 
 |---|---|---|---|
 | `MSG_RC` (1) | laptop → maszt | `rate_hz` (500) | 16 kanałów w tickach CRSF (172..1811), czas laptopa (do RTT), flagi |
 | `MSG_TELEMETRY` (2) | maszt → laptop | każda ramka od modułu | Surowa ramka CRSF z modułu ELRS (link stats, bateria, GPS, tryb lotu…) |
-| `MSG_MAST_STATUS` (3) | maszt → laptop | 10 Hz | Stan masztu, echo czasu laptopa, liczniki, timing ELRS |
+| `MSG_MAST_STATUS` (3) | maszt → laptop | 10 Hz | Stan masztu, echo czasu laptopa, liczniki, timing ELRS, ustawiony kanał VRX |
+| `MSG_VRX` (4) | laptop → maszt | 4 Hz (gdy `vrx_channel` ustawione) | Żądany kanał odbiornika wideo (indeks z `weakgcs/vrx.h`). Maszt przestraja moduł tylko przy zmianie. |
 
 ## Logika masztu
 

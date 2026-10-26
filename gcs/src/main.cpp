@@ -1,6 +1,7 @@
 // weakgcs: FPV ground station. Radio (USB HID) -> laptop -> Ethernet -> mast (ELRS TX + VRX).
 //
-// Keys: F11 fullscreen, F1 OSD on/off, F2 channel monitor, Esc quit.
+// Keys: F11 fullscreen, F1 OSD on/off, F2 channel monitor, Esc quit,
+//       Ctrl+Left/Right video channel, Ctrl+Up/Down video band (if vrx_channel is set).
 #include <SDL3/SDL.h>
 #include <SDL3/SDL_main.h>
 
@@ -17,6 +18,20 @@
 namespace {
 
 constexpr Uint64 OSD_REFRESH_MS = 50;  // redraw at least this often even without new video frames
+
+// Ctrl+arrows: step the video channel within the band, or the band keeping the channel number.
+uint8_t stepVrxChannel(uint8_t current, SDL_Keycode key) {
+    if (current >= vrx::NUM_CHANNELS) return current;
+    int band = current / vrx::CHANNELS_PER_BAND, ch = current % vrx::CHANNELS_PER_BAND;
+    switch (key) {
+        case SDLK_LEFT: ch = (ch + vrx::CHANNELS_PER_BAND - 1) % vrx::CHANNELS_PER_BAND; break;
+        case SDLK_RIGHT: ch = (ch + 1) % vrx::CHANNELS_PER_BAND; break;
+        case SDLK_DOWN: band = (band + vrx::NUM_BANDS - 1) % vrx::NUM_BANDS; break;
+        case SDLK_UP: band = (band + 1) % vrx::NUM_BANDS; break;
+        default: return current;
+    }
+    return (uint8_t)(band * vrx::CHANNELS_PER_BAND + ch);
+}
 
 std::string defaultConfigPath() {
     const char* base = SDL_GetBasePath();  // directory of the executable
@@ -83,6 +98,14 @@ int main(int argc, char** argv) {
                         break;
                     case SDLK_F1: osd.visible = !osd.visible; break;
                     case SDLK_F2: osd.channelMonitor = !osd.channelMonitor; break;
+                    case SDLK_LEFT:
+                    case SDLK_RIGHT:
+                    case SDLK_UP:
+                    case SDLK_DOWN:
+                        if (e.key.mod & SDL_KMOD_CTRL) {
+                            link.setVrxChannel(stepVrxChannel(link.snapshot().vrxRequested, e.key.key));
+                        }
+                        break;
                     default: break;
                 }
             }

@@ -5,6 +5,7 @@
 
 Stats g_stats;
 QueueHandle_t g_telemetryQueue;
+QueueHandle_t g_vrxQueue;
 
 namespace {
 
@@ -32,6 +33,7 @@ void setup() {
     Serial.println("\nweakgcs mast starting");
 
     g_telemetryQueue = xQueueCreate(32, sizeof(TelemetryItem));
+    g_vrxQueue = xQueueCreate(1, sizeof(uint8_t));
 
     WiFi.onEvent(onNetworkEvent);
     ETH.begin(cfg::ETH_ADDR, cfg::ETH_POWER_PIN, cfg::ETH_MDC_PIN, cfg::ETH_MDIO_PIN, ETH_PHY_LAN8720, cfg::ETH_CLK);
@@ -40,6 +42,7 @@ void setup() {
 
     // Ethernet/lwIP live on core 0, so the timing-critical CRSF task gets core 1 to itself.
     xTaskCreatePinnedToCore(netTask, "net", 4096, nullptr, 5, nullptr, 0);
+    xTaskCreatePinnedToCore(vrxTask, "vrx", 3072, nullptr, 1, nullptr, 0);
     xTaskCreatePinnedToCore(crsfTask, "crsf", 4096, nullptr, configMAX_PRIORITIES - 2, nullptr, 1);
 }
 
