@@ -69,6 +69,7 @@ ale jitter jest większy. Szczegóły w [docs/gcs.md](docs/gcs.md).
 
 ## Dokumentacja
 
+- [docs/assembly.md](docs/assembly.md): **instrukcja montażu krok po kroku**
 - [docs/shopping-list.md](docs/shopping-list.md): lista zakupów z cenami i kolejnością
 - [docs/hardware.md](docs/hardware.md): lista części, okablowanie skrętki, podłączenie ESP32 ↔ ELRS, zasilanie
 - [docs/gcs.md](docs/gcs.md): budowanie i konfiguracja aplikacji (Windows / Ubuntu), EdgeTX, strojenie opóźnień
