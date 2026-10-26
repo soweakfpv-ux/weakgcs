@@ -1,5 +1,7 @@
 # Lista zakupów
 
+Wersja do odhaczania (arkusz): [shopping-list.xlsx](shopping-list.xlsx).
+
 Zakładam, że masz już: **radio Radiomaster (EdgeTX)**, **drona z odbiornikiem ELRS 2,4 GHz i analogowym
 VTX 5,8 GHz** oraz **laptopa**. Ceny są orientacyjne (PLN, 2026) i mocno zależą od sklepu.
 
