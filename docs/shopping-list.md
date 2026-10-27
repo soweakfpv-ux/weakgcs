@@ -25,13 +25,13 @@ pary danych.
 | # | Co | Ile | ~Cena | Uwagi |
 |---|---|---|---|---|
 | 1 | **Olimex ESP32-POE** | 1 | 100–130 zł | Ethernet + USB do wgrywania firmware. Funkcja PoE w tym wariancie nieużywana; zasilanie 5 V z przetwornicy. Tańsza alternatywa: WT32-ETH01 (40–60 zł), ale wymaga przejściówki USB-UART do programowania (poz. 30). |
-| 2 | **Moduł ELRS TX 2,4 GHz**, np. Radiomaster Ranger Micro / Ranger Nano, BetaFPV, Happymodel | 1 | 150–350 zł | Jeśli masz już zewnętrzny moduł ELRS, użyj go. W UE wgraj firmware w wersji **LBT/EU** i trzymaj limit 100 mW. Sprawdź napięcie zasilania modułu. |
+| 2 | **Radiomaster Nomad Dual 1W Gemini Xrossband** (ELRS 2,4 GHz + 868 MHz) | 1 | ok. 400–500 zł | Zasilanie 6–16,8 V przez XT30. Firmware EU/LBT i EU868; moc w UE: 2,4 GHz do 100 mW, 868 MHz do 25 mW. Ma 2 anteny dwuzakresowe. |
 | 3 | ~~Odbiornik wideo 5,8 GHz~~: **masz Skyzone SteadyView** | – | 0 zł | Patrz sekcja „SteadyView na maszcie” niżej. SteadyView ma wbudowane diversity (dwa wejścia antenowe). |
 | 4 | Antena 5,8 GHz **kierunkowa (patch)** | 1 | 60–200 zł | Polaryzacja (RHCP/LHCP) **taka sama jak w dronie**. |
 | 5 | Antena 5,8 GHz dookólna (drugie wejście SteadyView) | 1 | 40–120 zł | Jak wyżej. Patch + dookólna to typowy zestaw do SteadyView. |
 | 6 | Antena 2,4 GHz do ELRS (dipol/T w zestawie; opcjonalnie patch/moxon) | 0–1 | 0–150 zł | Na start wystarczy antena z modułu. |
-| 7 | **Przetwornica step-down 5 V, ≥3 A** (np. moduł na MP1584 / XL4015 / Pololu D24V) | 1–2 | 15–60 zł | ESP32 + moduł ELRS (jeśli 5 V). Wejście musi znieść 24 V. |
-| 8 | ~~Przetwornica 12 V~~ | – | – | Niepotrzebna: SteadyView X z płytką ground station przyjmuje 2–6S, a goglowy moduł SteadyView potrzebuje 5 V (z przetwornicy z poz. 7). |
+| 7 | **Przetwornica step-down 5 V** (np. MP1584 / Pololu D24V) | 2 | 15–60 zł | ESP32 oraz osobno SteadyView. Wejście musi znieść 24 V. |
+| 8 | **Przetwornica step-down 12 V, ≥2 A** (np. XL4015) + wtyk XT30 z przewodem | 1 | 20–40 zł | Zasilanie Nomada (6–16,8 V). |
 | 9 | Kondensator low-ESR 470–1000 µF / 35 V | 2 | 5 zł | Na wejściu modułu ELRS (impulsowy pobór prądu). |
 | 10 | Rezystor 1 kΩ | kilka | 1 zł | Linia CRSF: ESP32 TX → 1 kΩ → moduł (patrz [hardware.md](hardware.md)). |
 | 11 | Konwerter poziomów logicznych (BSS138) | 1 | 5–10 zł | Tylko jeśli linia CRSF modułu jest 5 V. Kup na zapas. |
@@ -70,8 +70,8 @@ pary danych.
 |---|---|---|---|---|
 | 25 | **Maszt teleskopowy 5–8 m** (włókno szklane lub aluminium; np. maszt antenowy/krótkofalarski lub mocny bat wędkarski) | 1 | 100–400 zł | Włókno szklane nie ekranuje anten. |
 | 26 | Podstawa/statyw lub szpilka do wbicia w ziemię + **odciągi** | 1 kpl. | 50–200 zł | Wiatr na 6 m jest dużo silniejszy niż przy ziemi. |
-| 27 | **Puszka hermetyczna IP65** ok. 150×100×70 mm + dławiki kablowe | 1 | 30–60 zł | Na elektronikę na szczycie masztu. |
-| 28 | Krótkie przedłużki antenowe SMA/RP-SMA (low-loss, ≤20 cm) | 2–3 | 15–30 zł/szt. | **Sprawdź SMA vs RP-SMA** w VRX, module i antenach. |
+| 27 | **Obudowa z druku 3D** ([hardware/enclosure](../hardware/enclosure/README.md)): filament ASA/PETG ok. 300 g, wtopki M3 ×11, wkręty M3×8 ×11, sznur uszczelniający Ø2 mm 0,6 m, dławik PG9 | 1 kpl. | 80–150 zł | Zamiast gotowej puszki IP65. |
+| 28 | Przedłużka SMA **bulkhead** (gniazdo panelowe ↔ wtyk), RG316, 10–15 cm | 4 | 15–30 zł/szt. | 2× Nomad, 2× SteadyView (dookólna + patch w pokrywie). **Sprawdź SMA vs RP-SMA** w modułach i antenach. |
 | 29 | Uchwyt anten / obejmy na rurę, opaski, rzepy | – | 30 zł | |
 
 ## 6. Warsztat (jeśli nie masz)

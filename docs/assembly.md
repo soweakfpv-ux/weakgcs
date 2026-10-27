@@ -13,10 +13,10 @@ Powiązane dokumenty: [hardware.md](hardware.md) (schematy i piny), [gcs.md](gcs
 ## Schemat całości
 
 ```
- STRONA LAPTOPA                                    SKRĘTKA                               MASZT (puszka IP65)
- ─────────────                                     ───────                               ──────────────────
+ STRONA LAPTOPA                                    SKRĘTKA                               MASZT (obudowa z druku 3D)
+ ─────────────                                     ───────                               ──────────────────────────
  Radiomaster ──USB-C──┐                                                          ┌── bezpiecznik 2 A ──┬─ przetwornica A 5 V ─┬─ ESP32-POE (5 V)
-                      ▼                                                          │                     │                      └─ moduł ELRS (zasilanie*)
+                      ▼                                                          │                     ├─ przetwornica C 12 V ── XT30 ── Radiomaster Nomad (6–16,8 V)
  ┌────────┐  patchcord  ┌──────────┐  pomarańczowa + zielona (Ethernet)  ┌──────────┐ patchcord        └─ przetwornica B 5 V ── filtr LC ── SteadyView 5 V
  │ LAPTOP │─────────────│ RJ45 ↔   │═════════════════════════════════════│ RJ45 ↔   │──────────── ESP32-POE (RJ45)
  │        │             │ zaciski  │  brązowa (24 V)                     │ zaciski  │
@@ -26,7 +26,7 @@ Powiązane dokumenty: [hardware.md](hardware.md) (schematy i piny), [gcs.md](gcs
  └────────┘   (USB)     └──────────┘                                     └──────────┘
                                                                          ESP32: GPIO4 ─[1 kΩ]─┬─ CRSF modułu ELRS     GPIO32/33/13 ── CLK/DATA/CS SteadyView
                                                                                 GPIO36 ───────┘
- * moduł ELRS zasilasz napięciem z jego specyfikacji (5 V z przetwornicy A albo osobna przetwornica).
+ Moduł ELRS: Radiomaster Nomad (zasilanie przez XT30, sygnał CRSF przez piny zatoki modułu).
 ```
 
 Piny podane są dla Olimex ESP32-POE. Dla WT32-ETH01 patrz [hardware.md](hardware.md).
@@ -110,21 +110,27 @@ także z podłączonym ESP32.
 
 ## Krok 4. ESP32 ↔ moduł ELRS
 
-1. Sprawdź w specyfikacji modułu: napięcie zasilania i poziom linii CRSF (S.Port).
-   - Jeśli CRSF jest 5 V, wstaw konwerter poziomów BSS138 między ESP32 a moduł.
+1. **Radiomaster Nomad** zasilasz przez złącze **XT30** napięciem 6–16,8 V: dodatkowa
+   przetwornica C ustawiona na **12 V** (≥2 A, ustaw napięcie przed podłączeniem, jak w kroku 3).
+   Kondensator low-ESR z kroku 3 przylutuj na wejściu XT30.
+   Sygnał CRSF bierzesz z pinów zatoki modułu (JR / adapter micro z zestawu): pin sygnałowy (S.Port)
+   i GND. Pinu zasilania zatoki nie podłączaj, bo moduł jest zasilany z XT30.
+   - Sprawdź w instrukcji Nomada poziom linii CRSF. Jeśli jest 5 V, wstaw konwerter poziomów BSS138.
 2. Zlutuj połączenie half-duplex ([hardware.md](hardware.md#podłączenie-esp32--moduł-elrs)):
    ```
    GPIO4  ──[ 1 kΩ ]──┬── CRSF / S.Port modułu
    GPIO36 ────────────┘
-   GND ───────────────── GND modułu
-   5 V (przetwornica A) ─ zasilanie modułu (jeśli moduł przyjmuje 5 V)
+   GND ───────────────── GND modułu (pin zatoki)
+   12 V (przetwornica C) ─ XT30 Nomada
    ```
    Rezystor przylutuj bezpośrednio przy ESP32, a złącze zaizoluj koszulką.
-3. Przykręć antenę 2,4 GHz do modułu **przed** włączeniem zasilania. Moduł nadający bez anteny
-   może się uszkodzić.
+3. Przykręć **obie** anteny Nomada (dwuzakresowe 2,4 GHz / 868 MHz) **przed** włączeniem zasilania.
+   Moduł nadający bez anteny może się uszkodzić.
 4. Skonfiguruj moduł (WiFi modułu lub ELRS Configurator):
-   - firmware w wersji **EU / LBT**;
-   - moc **maks. 100 mW**;
+   - firmware w wersji **EU / LBT**, a dla 868 MHz pasmo **EU868** (nie 915 MHz);
+   - moc: 2,4 GHz **maks. 100 mW**, 868 MHz **maks. 25 mW**;
+   - tryb Gemini (oba układy na jednym paśmie) albo Xrossband (2,4 GHz + 868 MHz). Odbiornik w dronie
+     musi obsługiwać wybrany tryb;
    - packet rate np. 250 lub 500 Hz;
    - bind phrase taka jak w odbiorniku drona.
 5. Włącz zasilanie, uruchom aplikację.
@@ -233,7 +239,10 @@ i czy baluny są pasywne (izolują galwanicznie).
 
 ---
 
-## Krok 8. Puszka na maszcie
+## Krok 8. Obudowa na maszcie
+
+Obudowa do druku 3D z gotowymi otworami: [hardware/enclosure](../hardware/enclosure/README.md)
+(tam też kolejność montażu wtopek, dławika i uszczelki). Poniższe punkty dotyczą też gotowej puszki IP65.
 
 1. Rozplanuj: ESP32 i przetwornice w jednej części, SteadyView jak najdalej od przetwornic,
    moduł ELRS przy ściance (ciepło).
@@ -255,7 +264,8 @@ i czy baluny są pasywne (izolują galwanicznie).
 
 ## Krok 9. Maszt
 
-1. Na ziemi przymocuj puszkę do szczytowego segmentu masztu obejmami i opaskami.
+1. Na ziemi przymocuj obudowę (bracket z rowkiem V) do szczytowego segmentu masztu paskami na rzep
+   lub opaskami.
 2. Poprowadź skrętkę wzdłuż masztu, mocując ją opaskami co ok. 50 cm. Zostaw luz przy każdym
    łączeniu segmentów, żeby rozsuwanie nie szarpało kabla.
 3. Rozstaw podstawę / wbij szpilkę i przypnij **odciągi** (3 sztuki co 120°) na ok. 2/3 wysokości.

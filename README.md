@@ -23,6 +23,7 @@ a pilot siedzi przy laptopie połączonym z masztem jednym kablem (skrętką do 
 | `firmware/mast/` | Firmware ESP32 na maszt (PlatformIO): UDP → CRSF do modułu ELRS, telemetria z powrotem, failsafe. |
 | `gcs/` | Aplikacja na laptopa (C++20 + SDL3): joystick → UDP, wideo z grabbera, OSD. |
 | `tests/` | Testy jednostkowe (CRSF, protokół, mapowanie kanałów, config). |
+| `hardware/enclosure/` | Obudowa masztu do druku 3D (OpenSCAD + STL). |
 | `tools/fake_mast.py` | Symulator masztu do testowania aplikacji bez sprzętu. |
 | `docs/` | Sprzęt, protokół, budowanie, procedura testów. |
 

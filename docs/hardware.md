@@ -7,7 +7,7 @@ Pełna lista zakupów z cenami: [shopping-list.md](shopping-list.md).
 | Element | Propozycja | Uwagi |
 |---|---|---|
 | Kontroler masztu | **Olimex ESP32-POE** | Ethernet + USB do programowania, zasilany 5 V z przetwornicy. Alternatywa: WT32-ETH01. |
-| Moduł ELRS TX | Dowolny zewnętrzny moduł ELRS (np. Radiomaster Ranger / Ranger Micro, BetaFPV) | Zasilanie 5–8 V zależnie od modułu, przy 1 W pobiera nawet 1–2 A. |
+| Moduł ELRS TX | **Radiomaster Nomad Dual 1W Gemini Xrossband** (2,4 GHz + 868 MHz, 80×45×40 mm) | Zasilanie 6–16,8 V przez XT30 (przetwornica 12 V). Sygnał CRSF z pinów zatoki modułu. |
 | VRX | Analogowy odbiornik 5.8 GHz z wyjściem AV (np. RX5808 z diversity, albo VRX z wyjściem AV) | Na maszcie najlepiej z anteną kierunkową (patch/helical) i dookólną w diversity. |
 | Baluny wideo | Para pasywnych balunów CCTV (BNC ↔ skrętka) | Wideo analogowe na jednej parze skrętki, zero opóźnienia, do kilkuset metrów. |
 | Grabber USB | Grabber AV → USB (UVC) | **Przetestuj kilka modeli**, różnią się opóźnieniem o dziesiątki ms. Szukaj takich, które podają YUYV (nieskompresowane). |
